@@ -1,6 +1,32 @@
 // SECPROJ // HTB-HSLU Mapping Console
 // Application Logic
 
+// Global Error Handler for diagnostics
+window.addEventListener('error', function(e) {
+  const errDiv = document.createElement('div');
+  errDiv.style.position = 'fixed';
+  errDiv.style.bottom = '20px';
+  errDiv.style.left = '20px';
+  errDiv.style.background = 'rgba(255, 0, 100, 0.95)';
+  errDiv.style.color = 'white';
+  errDiv.style.padding = '15px 20px';
+  errDiv.style.zIndex = '99999';
+  errDiv.style.fontFamily = 'monospace';
+  errDiv.style.fontSize = '0.85rem';
+  errDiv.style.borderRadius = '4px';
+  errDiv.style.border = '2px solid #ff007f';
+  errDiv.style.boxShadow = '0 0 20px rgba(255, 0, 127, 0.5)';
+  errDiv.style.maxWidth = '600px';
+  
+  const filename = e.filename ? e.filename.split('/').pop() : 'inline/local';
+  errDiv.innerHTML = `
+    <div style="font-weight:bold; margin-bottom: 5px;">[!] RUNTIME ERROR DETECTED</div>
+    <div style="opacity: 0.9; margin-bottom: 8px;">${e.message}</div>
+    <div style="font-size:0.75rem; opacity: 0.7;">File: ${filename}:${e.lineno}:${e.colno}</div>
+  `;
+  document.body.appendChild(errDiv);
+});
+
 // State Management
 let currentFilter = "ALL";
 let selectedItemId = null;
@@ -73,8 +99,10 @@ function playBeep(type) {
 function buildFilters() {
   const filterContainer = document.getElementById("filter-container");
   
-  // Extract unique module codes
-  const modules = Array.from(new Set(HTB_DATA.map(item => item.modulCode))).sort();
+  // Extract unique module codes (excluding no-match rows)
+  const modules = Array.from(new Set(HTB_DATA.map(item => item.modulCode)))
+    .filter(mCode => mCode && mCode !== "-")
+    .sort();
   
   // Build HTML
   let buttonsHTML = `<button class="tag-btn active" data-filter="ALL">ALL MODULES</button>`;
@@ -100,52 +128,93 @@ function buildFilters() {
 
 // Render grid cards
 function renderGrid() {
-  const gridContainer = document.getElementById("grid-container");
   const resultsCountSpan = document.getElementById("results-count-val");
+  const mainContent = document.getElementById("main-content");
   
-  // Filter logic
-  let filteredData = HTB_DATA.filter(item => {
-    // Check Module Filter
-    const matchesFilter = currentFilter === "ALL" || item.modulCode === currentFilter;
-    return matchesFilter;
-  });
+  // Filter and group data by HTB Module
+  const getFilteredData = (moduleNum) => {
+    return HTB_DATA.filter(item => 
+      item.htbModule === moduleNum && 
+      (currentFilter === "ALL" || item.modulCode === currentFilter)
+    );
+  };
+
+  const filteredMod1 = getFilteredData(1);
+  const filteredMod2 = getFilteredData(2);
+  const filteredMod3 = getFilteredData(3);
   
-  resultsCountSpan.textContent = filteredData.length;
+  const totalMatches = filteredMod1.length + filteredMod2.length + filteredMod3.length;
+  resultsCountSpan.textContent = totalMatches;
   
-  if (filteredData.length === 0) {
-    gridContainer.innerHTML = `
-      <div class="no-results">
+  // Function to build HTML for a list of items
+  const buildCardsHTML = (items) => {
+    let html = "";
+    items.forEach(item => {
+      const isSelected = selectedItemId === item.id ? "selected" : "";
+      const badgeClass = item.modulCode === "-" ? "badge-no-match" : `badge-${item.modulCode}`;
+      html += `
+        <div class="cyber-card ${isSelected} match-${item.matchType}" data-id="${item.id}">
+          <div class="card-header">
+            <h3 class="card-title">${item.sectionHTB}</h3>
+            <div style="display: flex; gap: 6px; align-items: center; flex-shrink: 0;">
+              <span class="match-indicator ${item.matchType}">
+                ${item.matchType === 'green' ? 'MATCH' : item.matchType === 'yellow' ? 'TEILWEISE' : 'KEIN MATCH'}
+              </span>
+              <span class="card-badge ${badgeClass}">${item.modulCode}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            "${item.sentenceHTB}"
+          </div>
+          <div class="card-footer">
+            <span class="card-agenda">${item.agenda.split(":")[0]}</span>
+            <span class="card-more">ÖFFNEN &gt;</span>
+          </div>
+        </div>
+      `;
+    });
+    return html;
+  };
+  
+  // Toggle visibility of each module section based on match counts
+  const updateSection = (modNum, filteredList) => {
+    const sectionEl = document.getElementById(`section-module-${modNum}`);
+    const gridEl = document.getElementById(`grid-module-${modNum}`);
+    
+    if (filteredList.length === 0) {
+      sectionEl.classList.add("hidden");
+      gridEl.innerHTML = "";
+    } else {
+      sectionEl.classList.remove("hidden");
+      gridEl.innerHTML = buildCardsHTML(filteredList);
+    }
+  };
+  
+  updateSection(1, filteredMod1);
+  updateSection(2, filteredMod2);
+  updateSection(3, filteredMod3);
+  
+  // Handle case where no items match at all globally
+  const noResultsEl = document.getElementById("global-no-results");
+  if (totalMatches === 0) {
+    if (!noResultsEl) {
+      const alertDiv = document.createElement("div");
+      alertDiv.id = "global-no-results";
+      alertDiv.className = "no-results";
+      alertDiv.innerHTML = `
         <h3>[!] KEINE DATEN GEFUNDEN</h3>
         <p>Keine Mappings für diese Auswahl vorhanden.</p>
-      </div>
-    `;
-    return;
+      `;
+      mainContent.appendChild(alertDiv);
+    }
+  } else {
+    if (noResultsEl) {
+      mainContent.removeChild(noResultsEl);
+    }
   }
   
-  let cardsHTML = "";
-  filteredData.forEach(item => {
-    const isSelected = selectedItemId === item.id ? "selected" : "";
-    cardsHTML += `
-      <div class="cyber-card ${isSelected}" data-id="${item.id}">
-        <div class="card-header">
-          <h3 class="card-title">${item.sectionHTB}</h3>
-          <span class="card-badge badge-${item.modulCode}">${item.modulCode}</span>
-        </div>
-        <div class="card-body">
-          "${item.sentenceHTB}"
-        </div>
-        <div class="card-footer">
-          <span class="card-agenda">${item.agenda.split(":")[0]}</span>
-          <span class="card-more">ÖFFNEN &gt;</span>
-        </div>
-      </div>
-    `;
-  });
-  
-  gridContainer.innerHTML = cardsHTML;
-  
   // Add Event Listeners to Cards
-  gridContainer.querySelectorAll(".cyber-card").forEach(card => {
+  document.querySelectorAll(".cyber-card").forEach(card => {
     card.addEventListener("click", () => {
       const id = parseInt(card.getAttribute("data-id"));
       openDetailDrawer(id);
@@ -190,8 +259,7 @@ function openDetailDrawer(id) {
     }
   });
   
-  addTerminalLog(`Loading details for: ${node.sectionHTB}`, "action");
-  
+
   // Populate Drawer Data
   document.getElementById("drawer-htb-section").textContent = node.sectionHTB;
   document.getElementById("drawer-htb-quote").textContent = `"${node.sentenceHTB}"`;
@@ -227,6 +295,7 @@ document.getElementById("btn-clear-filters").addEventListener("click", () => {
   playBeep('click');
   currentFilter = "ALL";
   
+  // Reset HSLU Tag buttons
   const filterBtns = document.getElementById("filter-container").querySelectorAll(".tag-btn");
   filterBtns.forEach(b => b.classList.remove("active"));
   if (filterBtns[0]) filterBtns[0].classList.add("active");
@@ -255,10 +324,63 @@ btnAudio.addEventListener("click", () => {
   }
 });
 
-// Initial boot sequence
-window.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    buildFilters();
-    renderGrid();
-  }, 300);
-});
+// Floating sidebar active chapter highlight on scroll (ScrollSpy)
+function updateActiveSidebarItem() {
+  const sections = [1, 2, 3].map(modNum => document.getElementById(`section-module-${modNum}`));
+  const sidebarItems = document.querySelectorAll(".book-index-sidebar .index-item");
+  
+  let currentActiveIndex = 0;
+  
+  // Find which section is currently centered in or near the viewport top
+  sections.forEach((section, idx) => {
+    if (!section || section.classList.contains("hidden")) return;
+    const rect = section.getBoundingClientRect();
+    // If the top of the section is above or near the top/middle of the viewport,
+    // and the bottom of the section is still below it
+    if (rect.top <= 200 && rect.bottom >= 100) {
+      currentActiveIndex = idx;
+    }
+  });
+  
+  sidebarItems.forEach((item, idx) => {
+    if (idx === currentActiveIndex) {
+      item.classList.add("active");
+    } else {
+      item.classList.remove("active");
+    }
+  });
+}
+
+// Sidebar index item click logic
+function initSidebarIndexClicks() {
+  const sidebarItems = document.querySelectorAll(".book-index-sidebar .index-item");
+  sidebarItems.forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      playBeep('click');
+      const targetId = item.getAttribute("href");
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+}
+
+// Initial boot sequence helper
+function boot() {
+  buildFilters();
+  renderGrid();
+  initSidebarIndexClicks();
+  window.addEventListener("scroll", updateActiveSidebarItem);
+  updateActiveSidebarItem(); // Run once initially
+}
+
+// Handle loading states safely
+if (document.readyState === "complete" || document.readyState === "interactive") {
+  setTimeout(boot, 100);
+} else {
+  window.addEventListener("DOMContentLoaded", () => {
+    setTimeout(boot, 300);
+  });
+}

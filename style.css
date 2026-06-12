@@ -628,3 +628,263 @@ header::before {
     max-width: 100%;
   }
 }
+
+/* --- Main Scrollable Content Area --- */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 40px;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.module-section {
+  border: 1px solid var(--border-dim);
+  border-radius: 6px;
+  padding: 35px 25px;
+  background: rgba(14, 21, 36, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: all 0.3s ease;
+  margin-bottom: 40px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.module-section::after {
+  content: '';
+  position: absolute;
+  bottom: -50px;
+  left: 10%;
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-dim), transparent);
+}
+
+.module-section:last-of-type {
+  margin-bottom: 20px;
+}
+
+.module-section:last-of-type::after {
+  display: none;
+}
+
+.module-section.hidden {
+  display: none;
+}
+
+.section-heading {
+  font-family: var(--font-hud);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+  border-bottom: 1px solid var(--border-dim);
+  padding-bottom: 12px;
+  margin-bottom: 5px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* --- Floating Book-Style Sidebar Index --- */
+.book-index-sidebar {
+  position: fixed;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 900;
+  background: rgba(6, 9, 14, 0.95);
+  border: 1px solid var(--border-dim);
+  padding: 18px 12px;
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(0, 240, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.book-index-sidebar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 2px;
+  background: var(--neon-cyan);
+}
+
+.index-title {
+  font-family: var(--font-terminal);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+  text-align: center;
+  border-bottom: 1px solid rgba(30, 45, 74, 0.5);
+  padding-bottom: 6px;
+}
+
+.index-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-family: var(--font-terminal);
+  font-size: 0.85rem;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.index-item:hover {
+  color: var(--neon-cyan);
+  background: rgba(0, 240, 255, 0.05);
+  border-color: rgba(0, 240, 255, 0.15);
+}
+
+.index-item.active {
+  color: var(--neon-cyan);
+  background: rgba(0, 240, 255, 0.1);
+  border-color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+  box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.1);
+}
+
+.index-num {
+  font-weight: bold;
+  background: rgba(30, 45, 74, 0.6);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-size: 0.75rem;
+}
+
+.index-item.active .index-num {
+  background: var(--neon-cyan);
+  color: var(--bg-dark);
+}
+
+.index-text {
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 1200px) {
+  .index-text {
+    display: none;
+  }
+  .book-index-sidebar::before {
+    display: none;
+  }
+  .book-index-sidebar {
+    right: 15px;
+    padding: 10px 8px;
+  }
+}
+
+/* --- Color-coded Match Indicators --- */
+.match-indicator {
+  font-family: var(--font-terminal);
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+  display: inline-block;
+}
+
+.match-indicator.green {
+  background: rgba(0, 255, 102, 0.15);
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+}
+
+.match-indicator.yellow {
+  background: rgba(255, 170, 0, 0.15);
+  border: 1px solid var(--neon-orange);
+  color: var(--neon-orange);
+}
+
+.match-indicator.red {
+  background: rgba(255, 0, 127, 0.15);
+  border: 1px solid var(--neon-pink);
+  color: var(--neon-pink);
+}
+
+/* High Visibility Card Colors & Glows */
+.cyber-card.match-green {
+  border: 1px solid rgba(0, 255, 102, 0.35);
+  background: linear-gradient(135deg, var(--bg-card) 60%, rgba(0, 255, 102, 0.15) 100%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(0, 255, 102, 0.02);
+}
+
+.cyber-card.match-green:hover {
+  border-color: var(--neon-green);
+  background: linear-gradient(135deg, var(--bg-card-hover) 50%, rgba(0, 255, 102, 0.22) 100%);
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.28), inset 0 0 10px rgba(0, 255, 102, 0.05);
+}
+
+.cyber-card.match-green.selected {
+  border-color: var(--neon-green);
+  background: linear-gradient(135deg, var(--bg-card-hover) 40%, rgba(0, 255, 102, 0.28) 100%);
+  box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
+}
+
+.cyber-card.match-yellow {
+  border: 1px solid rgba(255, 170, 0, 0.35);
+  background: linear-gradient(135deg, var(--bg-card) 60%, rgba(255, 170, 0, 0.12) 100%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(255, 170, 0, 0.02);
+}
+
+.cyber-card.match-yellow:hover {
+  border-color: var(--neon-orange);
+  background: linear-gradient(135deg, var(--bg-card-hover) 50%, rgba(255, 170, 0, 0.2) 100%);
+  box-shadow: 0 0 15px rgba(255, 170, 0, 0.28), inset 0 0 10px rgba(255, 170, 0, 0.05);
+}
+
+.cyber-card.match-yellow.selected {
+  border-color: var(--neon-orange);
+  background: linear-gradient(135deg, var(--bg-card-hover) 40%, rgba(255, 170, 0, 0.25) 100%);
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.4);
+}
+
+.cyber-card.match-red {
+  border: 1px solid rgba(255, 0, 127, 0.35);
+  background: linear-gradient(135deg, var(--bg-card) 60%, rgba(255, 0, 127, 0.12) 100%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(255, 0, 127, 0.02);
+  opacity: 0.9;
+}
+
+.cyber-card.match-red:hover {
+  border-color: var(--neon-pink);
+  background: linear-gradient(135deg, var(--bg-card-hover) 50%, rgba(255, 0, 127, 0.2) 100%);
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.28), inset 0 0 10px rgba(255, 0, 127, 0.05);
+  opacity: 1;
+}
+
+.cyber-card.match-red.selected {
+  border-color: var(--neon-pink);
+  background: linear-gradient(135deg, var(--bg-card-hover) 40%, rgba(255, 0, 127, 0.25) 100%);
+  box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
+  opacity: 1;
+}
+
+/* Card badge for red match */
+.badge-no-match {
+  border-color: var(--neon-pink) !important;
+  color: var(--neon-pink) !important;
+  background: rgba(255, 0, 127, 0.08) !important;
+}
+

@@ -8,7 +8,7 @@
   <title>SECPROJ // HTB-HSLU Mapping Console</title>
   <meta name="description" content="Eine interaktive Cybersecurity-Konsole zur Visualisierung der Modul- und Kompetenz-Mappings zwischen Hack The Box (HTB) und der HSLU (Hochschule Luzern).">
   
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 
@@ -37,6 +37,7 @@
       </div>
     </header>
 
+
     <!-- Control Center (Dynamic Modules Tag Filter) -->
     <section class="control-center">
       <!-- Filters Tag Panel -->
@@ -59,10 +60,49 @@
       </div>
     </div>
 
-    <!-- Main Results Grid -->
-    <main id="grid-container" class="grid-view">
-      <!-- Database Cards populated here by app.js -->
+    <!-- Main Results scrollable container -->
+    <main id="main-content" class="dashboard-content">
+      <!-- Section HTB Modul 1 -->
+      <section id="section-module-1" class="module-section">
+        <h2 class="section-heading">HTB Modul 1 – Incident Handling Process</h2>
+        <div id="grid-module-1" class="grid-view">
+          <!-- Modul 1 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 2 -->
+      <section id="section-module-2" class="module-section">
+        <h2 class="section-heading">HTB Modul 2 – Security Monitoring & SIEM Fundamentals</h2>
+        <div id="grid-module-2" class="grid-view">
+          <!-- Modul 2 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 3 -->
+      <section id="section-module-3" class="module-section">
+        <h2 class="section-heading">HTB Modul 3 – Windows Event Logs & Finding Evil</h2>
+        <div id="grid-module-3" class="grid-view">
+          <!-- Modul 3 cards loaded here -->
+        </div>
+      </section>
     </main>
+
+    <!-- Floating Book-Style Chapter Index Sidebar -->
+    <nav class="book-index-sidebar">
+      <div class="index-title">KAPITEL</div>
+      <a href="#section-module-1" class="index-item active" data-target="1">
+        <span class="index-num">1</span>
+        <span class="index-text">Incident Handling</span>
+      </a>
+      <a href="#section-module-2" class="index-item" data-target="2">
+        <span class="index-num">2</span>
+        <span class="index-text">Security Monitoring</span>
+      </a>
+      <a href="#section-module-3" class="index-item" data-target="3">
+        <span class="index-num">3</span>
+        <span class="index-text">Event Logs & Evil</span>
+      </a>
+    </nav>
 
 
 
@@ -131,8 +171,69 @@
 
 
 
-  <!-- Scripts -->
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <!-- Floating Diagnostic Panel -->
+  <div id="diagnostics-panel" style="position: fixed; top: 10px; left: 10px; background: rgba(6, 9, 14, 0.95); color: #00ff66; padding: 15px; font-family: monospace; font-size: 11px; z-index: 99999; border: 1px solid #00f0ff; border-radius: 4px; box-shadow: 0 0 15px rgba(0, 240, 255, 0.3); max-width: 400px; line-height: 1.4;">
+    <h3 style="margin: 0 0 8px 0; color: #00f0ff; font-size: 12px; border-bottom: 1px dashed #1e2d4a; padding-bottom: 4px;">// SYSTEM DIAGNOSTICS</h3>
+    <div id="diag-data-status">Checking data...</div>
+    <div id="diag-grid-status" style="margin-top: 5px;">Checking grids...</div>
+    <div id="diag-css-status" style="margin-top: 5px;">Checking CSS...</div>
+    <div id="diag-errors" style="margin-top: 8px; color: #64748b; font-size: 10px; border-top: 1px dashed #1e2d4a; padding-top: 4px;">No errors.</div>
+  </div>
+
+  <script>
+    window.addEventListener('error', function(e) {
+      const errEl = document.getElementById('diag-errors');
+      if (errEl) {
+        errEl.style.color = '#ff007f';
+        errEl.innerHTML = 'ERROR: ' + e.message + '<br>Line: ' + e.lineno + ' in ' + (e.filename ? e.filename.split('/').pop() : 'inline');
+      }
+    });
+
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        try {
+          // Check Data
+          const dataEl = document.getElementById('diag-data-status');
+          if (typeof HTB_DATA === 'undefined') {
+            dataEl.innerHTML = 'DATA: HTB_DATA is UNDEFINED';
+            dataEl.style.color = '#ff007f';
+          } else {
+            dataEl.innerHTML = 'DATA: Loaded ' + HTB_DATA.length + ' items';
+          }
+
+          // Check Grids
+          const gridEl = document.getElementById('diag-grid-status');
+          let html = '';
+          for (let i = 1; i <= 3; i++) {
+            const grid = document.getElementById('grid-module-' + i);
+            if (!grid) {
+              html += 'Grid ' + i + ': NOT FOUND<br>';
+            } else {
+              html += 'Grid ' + i + ': ' + grid.children.length + ' cards (' + grid.offsetHeight + 'px)<br>';
+            }
+          }
+          gridEl.innerHTML = html;
+
+          // Check CSS Load
+          const cssEl = document.getElementById('diag-css-status');
+          const testCard = document.createElement('div');
+          testCard.className = 'cyber-card';
+          document.body.appendChild(testCard);
+          const computedStyle = window.getComputedStyle(testCard);
+          const displayMode = computedStyle.display;
+          document.body.removeChild(testCard);
+          cssEl.innerHTML = 'CSS: .cyber-card display is "' + displayMode + '"';
+          if (displayMode !== 'flex') {
+            cssEl.style.color = '#ffb86c';
+          }
+        } catch (err) {
+          document.getElementById('diag-errors').innerHTML = 'DIAG FAIL: ' + err.message;
+        }
+      }, 1000);
+    });
+  </script>
+
+  <script src="data.js?v=2"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>

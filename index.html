@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO & Meta Tags -->
+  <title>SECPROJ // HTB-HSLU Mapping Console</title>
+  <meta name="description" content="Eine interaktive Cybersecurity-Konsole zur Visualisierung der Modul- und Kompetenz-Mappings zwischen Hack The Box (HTB) und der HSLU (Hochschule Luzern).">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Retro CRT Scanline Overlay -->
+  <div id="scanlines-overlay" class="scanlines-overlay"></div>
+
+  <!-- Main HUD Application Window -->
+  <div id="app-container" class="app-container crt-effect">
+    
+    <!-- HUD Header -->
+    <header>
+      <div class="header-title-area">
+        <h1>SECPROJ <span>// HTB-HSLU MAPPING</span></h1>
+        <p>ACADEMY QUALIFICATION MAPPING DATABASE &bull; SECPROJ-VISUALISIERUNG</p>
+      </div>
+      
+
+      
+      <!-- Console Interface Controls -->
+      <div class="console-toggles">
+
+        <button id="btn-toggle-audio" class="btn-toggle active" title="Soundeffekte umschalten">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          AUDIO BEEP: <span class="toggle-status">ON</span>
+        </button>
+      </div>
+    </header>
+
+
+    <!-- Control Center (Dynamic Modules Tag Filter) -->
+    <section class="control-center">
+      <!-- Filters Tag Panel -->
+      <div class="filter-box-container">
+        <div class="input-label">
+          <span>Filter Mappings by HSLU Module</span>
+          <button id="btn-clear-filters" class="btn-clear">RESET CONSOLE</button>
+        </div>
+        <div id="filter-container" class="filter-tags">
+          <!-- Dynamic Module Tags Loaded by JS -->
+          <button class="tag-btn active" data-filter="ALL">ALL MODULES</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Matches Count Display Bar -->
+    <div class="view-toggle-area">
+      <div class="results-count">
+        EINTRÄGE GEFUNDEN: <span id="results-count-val">0</span>
+      </div>
+    </div>
+
+    <!-- Main Results scrollable container -->
+    <main id="main-content" class="dashboard-content">
+      <!-- Section HTB Modul 1 -->
+      <section id="section-module-1" class="module-section">
+        <h2 class="section-heading">HTB Modul 1 – Incident Handling Process</h2>
+        <div id="grid-module-1" class="grid-view">
+          <!-- Modul 1 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 2 -->
+      <section id="section-module-2" class="module-section">
+        <h2 class="section-heading">HTB Modul 2 – Security Monitoring & SIEM Fundamentals</h2>
+        <div id="grid-module-2" class="grid-view">
+          <!-- Modul 2 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 3 -->
+      <section id="section-module-3" class="module-section">
+        <h2 class="section-heading">HTB Modul 3 – Windows Event Logs & Finding Evil</h2>
+        <div id="grid-module-3" class="grid-view">
+          <!-- Modul 3 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 4 -->
+      <section id="section-module-4" class="module-section">
+        <h2 class="section-heading">HTB Modul 4 – Introduction to Threat Hunting & Hunting With Elastic</h2>
+        <div id="grid-module-4" class="grid-view">
+          <!-- Modul 4 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 5 -->
+      <section id="section-module-5" class="module-section">
+        <h2 class="section-heading">HTB Modul 5 – Understanding Log Sources & Investigating with Splunk</h2>
+        <div id="grid-module-5" class="grid-view">
+          <!-- Modul 5 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 6 -->
+      <section id="section-module-6" class="module-section">
+        <h2 class="section-heading">HTB Modul 6 – Windows Attacks & Defense</h2>
+        <div id="grid-module-6" class="grid-view">
+          <!-- Modul 6 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 7 -->
+      <section id="section-module-7" class="module-section">
+        <h2 class="section-heading">HTB Modul 7 – Intro to Network Traffic Analysis</h2>
+        <div id="grid-module-7" class="grid-view">
+          <!-- Modul 7 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 8 -->
+      <section id="section-module-8" class="module-section">
+        <h2 class="section-heading">HTB Modul 8 – Intermediate Network Traffic Analysis</h2>
+        <div id="grid-module-8" class="grid-view">
+          <!-- Modul 8 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 9 -->
+      <section id="section-module-9" class="module-section">
+        <h2 class="section-heading">HTB Modul 9 – Working with IDS/IPS</h2>
+        <div id="grid-module-9" class="grid-view">
+          <!-- Modul 9 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 10 -->
+      <section id="section-module-10" class="module-section">
+        <h2 class="section-heading">HTB Modul 10 – Introduction to Malware Analysis</h2>
+        <div id="grid-module-10" class="grid-view">
+          <!-- Modul 10 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 11 -->
+      <section id="section-module-11" class="module-section">
+        <h2 class="section-heading">HTB Modul 11 – JavaScript Deobfuscation</h2>
+        <div id="grid-module-11" class="grid-view">
+          <!-- Modul 11 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 12 -->
+      <section id="section-module-12" class="module-section">
+        <h2 class="section-heading">HTB Modul 12 – YARA & Sigma for SOC Analysts</h2>
+        <div id="grid-module-12" class="grid-view">
+          <!-- Modul 12 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 13 -->
+      <section id="section-module-13" class="module-section">
+        <h2 class="section-heading">HTB Modul 13 – Introduction to Digital Forensics</h2>
+        <div id="grid-module-13" class="grid-view">
+          <!-- Modul 13 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 14 -->
+      <section id="section-module-14" class="module-section">
+        <h2 class="section-heading">HTB Modul 14 – Detecting Windows Attacks with Splunk</h2>
+        <div id="grid-module-14" class="grid-view">
+          <!-- Modul 14 cards loaded here -->
+        </div>
+      </section>
+
+      <!-- Section HTB Modul 15 -->
+      <section id="section-module-15" class="module-section">
+        <h2 class="section-heading">HTB Modul 15 – Security Incident Reporting</h2>
+        <div id="grid-module-15" class="grid-view">
+          <!-- Modul 15 cards loaded here -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Floating Book-Style Chapter Index Sidebar -->
+    <nav class="book-index-sidebar">
+      <div class="index-title">KAPITEL</div>
+      <a href="#section-module-1" class="index-item active" data-target="1">
+        <span class="index-num">1</span>
+        <span class="index-text">Incident Handling</span>
+      </a>
+      <a href="#section-module-2" class="index-item" data-target="2">
+        <span class="index-num">2</span>
+        <span class="index-text">Security Monitoring</span>
+      </a>
+      <a href="#section-module-3" class="index-item" data-target="3">
+        <span class="index-num">3</span>
+        <span class="index-text">Event Logs & Evil</span>
+      </a>
+      <a href="#section-module-4" class="index-item" data-target="4">
+        <span class="index-num">4</span>
+        <span class="index-text">Threat Hunting</span>
+      </a>
+      <a href="#section-module-5" class="index-item" data-target="5">
+        <span class="index-num">5</span>
+        <span class="index-text">Log Sources & Splunk</span>
+      </a>
+      <a href="#section-module-6" class="index-item" data-target="6">
+        <span class="index-num">6</span>
+        <span class="index-text">Windows Attacks</span>
+      </a>
+      <a href="#section-module-7" class="index-item" data-target="7">
+        <span class="index-num">7</span>
+        <span class="index-text">Network Analysis</span>
+      </a>
+      <a href="#section-module-8" class="index-item" data-target="8">
+        <span class="index-num">8</span>
+        <span class="index-text">Int. Network Analysis</span>
+      </a>
+      <a href="#section-module-9" class="index-item" data-target="9">
+        <span class="index-num">9</span>
+        <span class="index-text">IDS/IPS</span>
+      </a>
+      <a href="#section-module-10" class="index-item" data-target="10">
+        <span class="index-num">10</span>
+        <span class="index-text">Malware Analysis</span>
+      </a>
+      <a href="#section-module-11" class="index-item" data-target="11">
+        <span class="index-num">11</span>
+        <span class="index-text">JS Deobfuscation</span>
+      </a>
+      <a href="#section-module-12" class="index-item" data-target="12">
+        <span class="index-num">12</span>
+        <span class="index-text">YARA & Sigma</span>
+      </a>
+      <a href="#section-module-13" class="index-item" data-target="13">
+        <span class="index-num">13</span>
+        <span class="index-text">Digital Forensics</span>
+      </a>
+      <a href="#section-module-14" class="index-item" data-target="14">
+        <span class="index-num">14</span>
+        <span class="index-text">Windows & Splunk</span>
+      </a>
+      <a href="#section-module-15" class="index-item" data-target="15">
+        <span class="index-num">15</span>
+        <span class="index-text">Incident Reporting</span>
+      </a>
+    </nav>
+
+
+
+  </div>
+
+  <!-- Detail Slider Drawer (Fixed Panel Overlay) -->
+  <div id="drawer-backdrop" class="drawer-backdrop"></div>
+  <div id="detail-drawer" class="detail-drawer">
+    
+    <div class="drawer-header">
+      <div class="drawer-title-area">
+        <h2 id="drawer-htb-section" class="drawer-title">Incident Handling</h2>
+      </div>
+      <button id="btn-close-drawer" class="btn-close-drawer" title="Close Panel">&times;</button>
+    </div>
+    
+    <div class="drawer-content">
+      
+      <!-- HTB Quote -->
+      <div class="detail-section">
+        <span class="detail-label">Sentence from HTB</span>
+        <div id="drawer-htb-quote" class="detail-value htb-quote"></div>
+      </div>
+
+      <!-- Mapped HSLU Module -->
+      <div class="detail-section">
+        <span class="detail-label">HSLU Modul</span>
+        <div id="drawer-hslu-module" class="detail-value" style="font-weight: bold; color: var(--neon-cyan);"></div>
+      </div>
+
+      <!-- Module Description -->
+      <div class="detail-section">
+        <span class="detail-label">Modulkurzbeschrieb</span>
+        <div id="drawer-module-desc" class="detail-value"></div>
+      </div>
+
+      <!-- Syllabus / Agenda -->
+      <div class="detail-section">
+        <span class="detail-label">Syllabus / Agenda (HSLU)</span>
+        <div id="drawer-agenda" class="detail-value" style="color: var(--neon-orange);"></div>
+      </div>
+
+      <!-- Mapped Competencies -->
+      <div class="detail-section">
+        <span class="detail-label">Abschlusskompetenzen</span>
+        <div id="drawer-abschluss"></div>
+      </div>
+
+      <div class="detail-section">
+        <span class="detail-label">Fachkompetenzen</span>
+        <div id="drawer-fach"></div>
+      </div>
+
+      <div class="detail-section">
+        <span class="detail-label">Methodenkompetenzen</span>
+        <div id="drawer-methoden"></div>
+      </div>
+
+      <div class="detail-section">
+        <span class="detail-label">Personalkompetenz</span>
+        <div id="drawer-personal"></div>
+      </div>
+
+    </div>
+  </div>
+
+
+
+
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

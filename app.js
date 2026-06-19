@@ -139,11 +139,13 @@ function renderGrid() {
     );
   };
 
-  const filteredMod1 = getFilteredData(1);
-  const filteredMod2 = getFilteredData(2);
-  const filteredMod3 = getFilteredData(3);
-  
-  const totalMatches = filteredMod1.length + filteredMod2.length + filteredMod3.length;
+  const filteredMods = [];
+  let totalMatches = 0;
+  for (let m = 1; m <= 15; m++) {
+    const list = getFilteredData(m);
+    filteredMods.push(list);
+    totalMatches += list.length;
+  }
   resultsCountSpan.textContent = totalMatches;
   
   // Function to build HTML for a list of items
@@ -182,17 +184,17 @@ function renderGrid() {
     const gridEl = document.getElementById(`grid-module-${modNum}`);
     
     if (filteredList.length === 0) {
-      sectionEl.classList.add("hidden");
-      gridEl.innerHTML = "";
+      if (sectionEl) sectionEl.classList.add("hidden");
+      if (gridEl) gridEl.innerHTML = "";
     } else {
-      sectionEl.classList.remove("hidden");
-      gridEl.innerHTML = buildCardsHTML(filteredList);
+      if (sectionEl) sectionEl.classList.remove("hidden");
+      if (gridEl) gridEl.innerHTML = buildCardsHTML(filteredList);
     }
   };
   
-  updateSection(1, filteredMod1);
-  updateSection(2, filteredMod2);
-  updateSection(3, filteredMod3);
+  for (let m = 1; m <= 15; m++) {
+    updateSection(m, filteredMods[m - 1]);
+  }
   
   // Handle case where no items match at all globally
   const noResultsEl = document.getElementById("global-no-results");
@@ -326,21 +328,41 @@ btnAudio.addEventListener("click", () => {
 
 // Floating sidebar active chapter highlight on scroll (ScrollSpy)
 function updateActiveSidebarItem() {
-  const sections = [1, 2, 3].map(modNum => document.getElementById(`section-module-${modNum}`));
+  const sections = Array.from({length: 15}, (_, i) => i + 1).map(modNum => document.getElementById(`section-module-${modNum}`));
   const sidebarItems = document.querySelectorAll(".book-index-sidebar .index-item");
   
   let currentActiveIndex = 0;
   
-  // Find which section is currently centered in or near the viewport top
-  sections.forEach((section, idx) => {
-    if (!section || section.classList.contains("hidden")) return;
-    const rect = section.getBoundingClientRect();
-    // If the top of the section is above or near the top/middle of the viewport,
-    // and the bottom of the section is still below it
-    if (rect.top <= 200 && rect.bottom >= 100) {
-      currentActiveIndex = idx;
+  // Check if we are scrolled to the bottom of the page
+  const isAtBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 60);
+  const isAtTop = window.scrollY < 100;
+  
+  if (isAtTop) {
+    currentActiveIndex = 0;
+  } else if (isAtBottom) {
+    // Find the last visible section
+    for (let i = sections.length - 1; i >= 0; i--) {
+      if (sections[i] && !sections[i].classList.contains("hidden")) {
+        currentActiveIndex = i;
+        break;
+      }
     }
-  });
+  } else {
+    // Find the section that is closest to the top area of the viewport (e.g. crossing 120px)
+    let minDiff = Infinity;
+    sections.forEach((section, idx) => {
+      if (!section || section.classList.contains("hidden")) return;
+      const rect = section.getBoundingClientRect();
+      // If the section has entered the upper portion of the viewport
+      if (rect.top <= 300 && rect.bottom >= 50) {
+        const diff = Math.abs(rect.top - 80);
+        if (diff < minDiff) {
+          minDiff = diff;
+          currentActiveIndex = idx;
+        }
+      }
+    });
+  }
   
   sidebarItems.forEach((item, idx) => {
     if (idx === currentActiveIndex) {

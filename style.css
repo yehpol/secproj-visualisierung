@@ -369,22 +369,11 @@ header::before {
   font-size: 0.7rem;
   padding: 2px 8px;
   border-radius: 2px;
-  background: rgba(30, 45, 74, 0.4);
-  border: 1px solid var(--border-dim);
-  color: var(--text-muted);
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
   white-space: nowrap;
 }
-
-/* Color codes for modules */
-.badge-CYBER { border-color: var(--neon-green); color: var(--neon-green); background: rgba(0, 255, 102, 0.05); }
-.badge-IRFORENSIC { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0, 240, 255, 0.05); }
-.badge-CRS { border-color: #ff00ff; color: #ff00ff; background: rgba(255, 0, 255, 0.05); }
-.badge-HTCLAW { border-color: var(--neon-orange); color: var(--neon-orange); background: rgba(255, 170, 0, 0.05); }
-.badge-SOC { border-color: #9d4edd; color: #e0aaff; background: rgba(157, 78, 221, 0.05); }
-.badge-MCIF { border-color: #0077ff; color: #8ecae6; background: rgba(0, 119, 255, 0.05); }
-.badge-MALWLAB { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(255, 0, 127, 0.05); }
-.badge-CF { border-color: #ffea00; color: #ffea00; background: rgba(255, 234, 0, 0.05); }
-.badge-DFF { border-color: #4cc9f0; color: #4cc9f0; background: rgba(76, 201, 240, 0.05); }
 
 .card-body {
   font-size: 0.8rem;
@@ -707,6 +696,25 @@ html {
   backdrop-filter: blur(8px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(0, 240, 255, 0.05);
   transition: all 0.3s ease;
+  max-height: 85vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--neon-cyan) rgba(30, 45, 74, 0.2);
+}
+
+/* Custom scrollbar for Webkit browsers */
+.book-index-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.book-index-sidebar::-webkit-scrollbar-track {
+  background: rgba(30, 45, 74, 0.2);
+  border-radius: 2px;
+}
+
+.book-index-sidebar::-webkit-scrollbar-thumb {
+  background: var(--neon-cyan);
+  border-radius: 2px;
 }
 
 .book-index-sidebar::before {
@@ -883,8 +891,8 @@ html {
 
 /* Card badge for red match */
 .badge-no-match {
-  border-color: var(--neon-pink) !important;
-  color: var(--neon-pink) !important;
-  background: rgba(255, 0, 127, 0.08) !important;
+  border-color: var(--neon-cyan) !important;
+  color: var(--neon-cyan) !important;
+  background: rgba(0, 240, 255, 0.05) !important;
 }
 
